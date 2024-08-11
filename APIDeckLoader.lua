@@ -1,4 +1,8 @@
 CodeToSetID={
+ ["SFA"]="sv6pt5",
+ ["SV6PT5"]="sv6pt5",
+ ["TWM"]="sv6",
+ ["SV6"]="sv6",
  ["TEF"]="sv5",
  ["SV5"]="sv5",
  ["PAF"]="sv4pt5",
@@ -17,16 +21,21 @@ CodeToSetID={
  ["SVP"]="svp",
  ["PR-SV"]="svp",
  ["CRZGG"]="swsh12pt5gg",
+ ["CRZ-GG"]="swsh12pt5gg",
  ["CRZ"]="swsh12pt5",
  ["SITTG"]="swsh12tg",
+ ["SIT-TG"]="swsh12tg",
  ["SIT"]="swsh12",
  ["LORTG"]="swsh11tg",
+ ["LOR-TG"]="swsh11tg",
  ["LOR"]="swsh11",
  ["MCD22"]="mcd22",
  ["PGO"]="pgo",
- ["ASR"]="swsh10tg",
+ ["ASRTG"]="swsh10tg",
+ ["ASR-TG"]="swsh10tg",
  ["ASR"]="swsh10",
- ["BRS"]="swsh9tg",
+ ["BRSTG"]="swsh9tg",
+ ["BRS-TG"]="swsh9tg",
  ["BRS"]="swsh9",
  ["FST"]="swsh8",
  ["CELC"]="cel25c",
@@ -198,6 +207,11 @@ CodeToSetID={
 }
 
 prefixs={
+ ["swsh12pt5gg"]="GG",
+ ["swsh12tg"]="TG",
+ ["swsh11tg"]="TG",
+ ["swsh10tg"]="TG",
+ ["swsh9tg"]="TG",
  ["swshp"]="SWSH",
  ["smp"]="SM",
  ["xyp"]="XY",
@@ -607,17 +621,23 @@ dumbEnergySets={
 }
 APIminDigits={
  smp=2,
- swshp=3
+ swshp=3,
+ swsh45sv=3,
+ swsh9tg=2,
+ swsh10tg=2,
+ swsh11tg=2,
+ swsh12tg=2,
+ swsh12pt5gg=2
 }
 subSetPrefix={
- HIF={"SV","sma"},
- SHF={"SV","swsh45sv"},
- CEL={"CC","cel25c"},
- BRS={"TG","swsh9tg"},
- ASR={"TG","swsh10tg"},
- LOR={"TG","swsh11tg"},
- SIT={"TG","swsh12tg"},
- CRZ={"GG","swsh12pt5gg"},
+ HIF={"SV","sma",69},
+ SHF={"SV","swsh45sv",73},
+ CEL={"CC","cel25c",25},
+ BRS={"TG","swsh9tg",186},
+ ASR={"TG","swsh10tg",216},
+ LOR={"TG","swsh11tg",217},
+ SIT={"TG","swsh12tg",215},
+ CRZ={"GG","swsh12pt5gg",160},
 }
 CELNumToID={
 CC1="2_A",
@@ -741,14 +761,24 @@ function loadDecklist(obj,color,alt)
      addEnergy(normalSetToEnergy[setName],letterToEnergy[cardNum],wordsNum)
     else
      local setID=CodeToSetID[setName]
-     if subSetPrefix[setName]and startsWith(cardNum,subSetPrefix[setName][1])then
-      setID=subSetPrefix[setName][2]
+     if subSetPrefix[setName]then
+      if startsWith(cardNum,subSetPrefix[setName][1])then
+       setID=subSetPrefix[setName][2]
+      elseif tonumber(cardNum)and tonumber(cardNum)>subSetPrefix[setName][3]then
+       cardNum=subSetPrefix[setName][1]..tostring(tonumber(cardNum)-subSetPrefix[setName][3])
+       setID=subSetPrefix[setName][2]
+      end
      end
-     local digits=APIminDigits[setID] or 1
-     if #cardNum>digits then
-      cardNum=string.gsub(cardNum,"^0+","",1)
-     elseif #cardNum<digits then
-      while #cardNum<digits do cardNum="0"..cardNum end
+     if APIminDigits[setID]then
+      local prefix=string.match(cardNum,"^%a+")or""
+      cardNum=string.gsub(cardNum,"%a","")
+      local digits=APIminDigits[setID]
+      if #cardNum>digits then
+       cardNum=string.gsub(cardNum,"^0+","",1)
+      elseif #cardNum<digits then
+       while #cardNum<digits do cardNum="0"..cardNum end
+      end
+      cardNum=prefix..cardNum
      end
      if setID=="cel25c"and CELNumToID[cardNum]then
       cardNum=CELNumToID[cardNum]
@@ -833,12 +863,12 @@ function getDeck(color)
   lock=false
   return
  end
- Notes.setNotes(url.."&select=id,name,images,number,rarity,set,supertype,subtypes,types,nationalPokedexNumbers")
+ --Notes.setNotes(url.."&select=id,name,images,number,rarity,set,supertype,subtypes,types,nationalPokedexNumbers")
  r=WebRequest.get(url.."&select=id,name,images,number,rarity,set,supertype,subtypes,types,nationalPokedexNumbers",function()makeCards(r,color)end)
 end
 
 function makeCards(r,color)
- if r.is_error or r.response_code>=400 then
+ if r.is_error or r.response_code>=400 or r.response_code==0 then
   log(r.error)
   log(r.text)
   log(r.response_code)
@@ -1049,7 +1079,7 @@ function nextSet()
 end
 
 function getSteamUrl(url)
- if url then return"http://cloud-3.steamusercontent.com/ugc/"..url.."/"end
+ if url then return"https://steamusercontent-a.akamaihd.net/ugc/"..url.."/"end
 end
 
 function startsWith(input,prefix)
