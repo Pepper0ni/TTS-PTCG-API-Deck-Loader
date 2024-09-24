@@ -1,4 +1,6 @@
 CodeToSetID={
+ ["SCR"]="sv7",
+ ["SV7"]="sv7",
  ["SFA"]="sv6pt5",
  ["SV6PT5"]="sv6pt5",
  ["TWM"]="sv6",
@@ -562,7 +564,6 @@ energyTable={
   api=true,
   code="sve",
   basic=true,
-  rarity="C",
   types={
    Grass={num="1",setName="Scarlet & Violet Energies"},
    Fire={num="2",setName="Scarlet & Violet Energies"},
@@ -587,7 +588,26 @@ energyTable={
    Lightning={code="sv1",setName="Scarlet & Violet",date="20230331",num="257"},
    Psychic={code="sv3pt5",setName="151",date="20230922",num="207"},
    Fighting={code="sv1",setName="Scarlet & Violet",date="20230331",num="258"},
+   Darkness={code="sv6pt5",setName="Shrouded Fable",date="20240802",num="98"},
+   Metal={code="sv6pt5",setName="Shrouded Fable",date="20240802",num="99"},
   }
+ },
+ {set="SV Tera",
+  display="Tera",
+  api=true,
+  code="sve",
+  basic=true,
+  types={
+   Grass={num="9",setName="Scarlet & Violet Energies"},
+   Fire={num="10",setName="Scarlet & Violet Energies"},
+   Water={num="11",setName="Scarlet & Violet Energies"},
+   Lightning={num="12",setName="Scarlet & Violet Energies"},
+   Psychic={num="13",setName="Scarlet & Violet Energies"},
+   Fighting={num="14",setName="Scarlet & Violet Energies"},
+   Darkness={num="15",setName="Scarlet & Violet Energies"},
+   Metal={num="16",setName="Scarlet & Violet Energies"}
+  },
+  date="20230331"
  },
 }
 
@@ -956,7 +976,7 @@ function getEnergyCardData(trySet,eType,spawnLoc,customData,cardID,deckID)
  Nickname=name,
  Description=(setTable.types[eType].setName or setTable.set).." #"..setTable.types[eType].num..rar,
  GMNotes="90000000",
- Memo=(setTable.types[eType].date or setTable.date)..setTable.types[eType].num,
+ Memo=(setTable.types[eType].date or setTable.date)..buildCardNumber(setTable.types[eType].num),
  CardID=cardID,
  CustomDeck={[deckID]=customData},
  LuaScriptState=500
