@@ -1,4 +1,6 @@
 CodeToSetID={
+ ["SSP"]="sv8",
+ ["SV8"]="sv8",
  ["SCR"]="sv7",
  ["SV7"]="sv7",
  ["SFA"]="sv6pt5",
