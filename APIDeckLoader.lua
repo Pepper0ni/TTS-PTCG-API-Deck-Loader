@@ -1,4 +1,8 @@
 CodeToSetID={
+ ["JTR"]="sv9",
+ ["SV9"]="sv9",
+ ["PRE"]="sv8pt5",
+ ["SV8PT5"]="sv8pt5",
  ["SSP"]="sv8",
  ["SV8"]="sv8",
  ["SCR"]="sv7",
